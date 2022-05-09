@@ -32,8 +32,11 @@ class CakeInterestedListController extends Controller
 
         foreach ($requestData as $list) {
             $cake = $this->cakes->byId($list['cake_id']);
-            $emailJob = (new SendCakeListMail($list['email'], $cake))->delay(Carbon::now()->addMinutes(1));
-            dispatch($emailJob);
+
+            if ($cake->available_quantity > 0) {
+                $emailJob = (new SendCakeListMail($list['email'], $cake))->delay(Carbon::now()->addMinutes(1));
+                dispatch($emailJob);
+            }
         }
 
         return $result;
